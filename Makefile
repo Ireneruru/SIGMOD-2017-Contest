@@ -1,13 +1,13 @@
 CXX := g++ -std=c++11
 CXXFLAGS := -g -O3 -Iinclude -Llib
-LIBRARIES := -lpthread -ltbb -ltbbmalloc
+LIBRARIES := -lpthread -ltbb -ltbbmalloc -lboost_system
 
 all: harness main
 
 harness: harness.cpp
 	$(CXX) $(CXXFLAGS) harness.cpp -o harness $(LIBRARIES)
 
-main: main.cpp find.h trie.h token.h constant.h
+main: main.cpp find.h trie.h constant.h
 	$(CXX) $(CXXFLAGS) main.cpp -o main $(LIBRARIES)
 
 run: harness main

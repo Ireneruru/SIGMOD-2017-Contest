@@ -2,13 +2,18 @@
 
 struct Answer {
     char *start, *end;
-    TrieHash* word;
+    TrieRoot* word;
+    TrieHash* ngram;
     char pos;
 };
 
 struct Ans {
     vector<char> ans;
+    atomic_bool done;
     Ans() : ans(max_answer_size) {};
+    Ans(Ans &&a) : ans(a.ans) {
+        done.store(a.done);
+    }
 };
 
 bool operator< (const Answer& a, const Answer& b) {
@@ -16,6 +21,7 @@ bool operator< (const Answer& a, const Answer& b) {
 }
 
 sem_t find_start_sem[find_thread_number], find_done_sem;
+sem_t print_start_sem, print_done_sem;
 
 char *find_string;
 unsigned total_len;
@@ -27,6 +33,22 @@ vector<Ans>* ans;
 vector<unsigned>* last_found;
 
 vector<pair<char*,unsigned>> sentences;
+
+void print_thread() {
+    while (true) {
+        sem_wait(&print_start_sem);
+        unsigned now = 0;
+        while (now < sentences.size()) {
+            if (!ans->data()[now].done) {
+                continue;
+            }
+            fputs_unlocked(ans->data()[now].ans.data(), stdout);
+            ans->data()[now].done.store(false);
+            now++;
+        }
+        sem_post(&print_done_sem);
+    }
+}
 
 void find_thread(int num) {
     while (true) {
@@ -44,47 +66,74 @@ void find_thread(int num) {
                 unsigned timestamp = sentences[query].second;
                 bool first = true;
                 for (char *p = sentences[query].first, *q = p; *p != '\n'; p = ++q) {
-                    unsigned trie_num = Token::token_hash(q) & (trie_thread_number - 1);
+                    unsigned first_hash = Trie::string_hash(q);
+                    unsigned trie_num = thread_map[first_hash & 127];
                     Trie &T = *tries[trie_num];
-                    ptr_t node = root;
-                    char pos = 0;
-                    for (char *r = p, *s = r; *r != '\n'; r = ++s) {
-                        token_t token = T.token_table->get(s, false);
-                        if (token == null) {
-                            break;
+
+                    char *r = p, *s = r;
+                    ptr_t token = T.get(s, first_hash);
+                    s = q;
+                    if (token == null) {
+                        continue;
+                    }
+                    if (T.trie_root[token].ngram) {
+                        TrieRoot &tr = T.trie_root[token];
+                        if (last[tr.ngram] < timestamp && tr.check(timestamp)) {
+                            if (ans_p * 1.5 > ans_.size()) {
+                                ans_.resize(ans_.size() * 2);
+                            }
+                            if (!first) {
+                                ans_[ans_p++] = '|';
+                            }
+                            memcpy(ans_.data() + ans_p, p, s - p);
+                            ans_p += s - p;
+                            first = false;
+                            last[tr.ngram] = timestamp;
                         }
-                        bool found = false;
-                        if (node != root && pos + 1 < T.trie_node[node].size && T.trie_node[node].token[pos + 1] == token) {
-                            ++pos;
-                            found = true;
-                        }
-                        else {
-                            unsigned hash = T.trie_hash(node, pos, token);
-                            for (ptr_t t = hash; t != null && T.trie_node[t].from != null; t = T.trie_node[t].next) {
-                                if (T.trie_node[t].from == node && T.trie_node[t].token[0] == token) {
-                                    node = t;
-                                    pos = 0;
-                                    found = true;
-                                    break;
+                    }
+                    r = ++s;
+                    if (*r != '\n') {
+                        ptr_t node = ~token;
+                        char pos = 0;
+                        do {
+                            token = T.get(s, false);
+                            if (token == null) {
+                                break;
+                            }
+                            bool found = false;
+                            if (node < T.next_node && pos + 1 < T.trie_node[node].size && T.trie_node[node].token[pos + 1] == token) {
+                                ++pos;
+                                found = true;
+                            } else {
+                                unsigned hash = T.trie_hash(node, pos, token);
+                                for (ptr_t t = hash;
+                                     t != null && T.trie_node[t].from != null; t = T.trie_node[t].next) {
+                                    if (T.trie_node[t].from == node && T.trie_node[t].token[0] == token) {
+                                        node = t;
+                                        pos = 0;
+                                        found = true;
+                                        break;
+                                    }
                                 }
                             }
-                        }
-                        if (!found) break;
-                        if (T.trie_node[node].ngram[pos]) {
-                            TrieHash &tr = T.trie_node[node];
-                            if (last[tr.ngram[pos]] < timestamp && tr.check(pos, timestamp)) {
-                                if (ans_p * 1.5 > ans_.size()) {
-                                    ans_.resize(ans_.size() * 2);
+                            if (!found) break;
+                            if (T.trie_node[node].ngram[pos]) {
+                                TrieHash &tr = T.trie_node[node];
+                                if (last[tr.ngram[pos]] < timestamp && tr.check(pos, timestamp)) {
+                                    if (ans_p * 1.5 > ans_.size()) {
+                                        ans_.resize(ans_.size() * 2);
+                                    }
+                                    if (!first) {
+                                        ans_[ans_p++] = '|';
+                                    }
+                                    memcpy(ans_.data() + ans_p, p, s - p);
+                                    ans_p += s - p;
+                                    first = false;
+                                    last[tr.ngram[pos]] = timestamp;
                                 }
-                                if (!first) {
-                                    ans_[ans_p++] = '|';
-                                }
-                                memcpy(ans_.data() + ans_p, p, s - p);
-                                ans_p += s - p;
-                                first = false;
-                                last[tr.ngram[pos]] = timestamp;
                             }
-                        }
+                            r = ++s;
+                        } while (*r != '\n');
                     }
                 }
                 if (first) {
@@ -93,6 +142,7 @@ void find_thread(int num) {
                 else {
                     strcpy(ans_.data() + ans_p, "\n");
                 }
+                (*ans)[query].done.store(true);
             }
         }
         else {
@@ -110,39 +160,61 @@ void find_thread(int num) {
 
                 for (char *p = start_p, *q = p; p != end_p; p = ++q) {
                     if (*p == '\n') continue;
-                    unsigned trie_num = Token::token_hash(q) & (trie_thread_number - 1);
+
+                    unsigned first_hash = Trie::string_hash(q);
+                    unsigned trie_num = thread_map[first_hash & 127];
                     Trie &T = *tries[trie_num];
-                    ptr_t node = root;
-                    char pos = 0;
-                    for (char *r = p, *s = r; *r != '\n'; r = ++s) {
-                        token_t token = T.token_table->get(s, false);
-                        if (token == null) {
-                            break;
-                        }
-                        bool found = false;
-                        if (node != root && pos + 1 < T.trie_node[node].size && T.trie_node[node].token[pos + 1] == token) {
-                            ++pos;
-                            found = true;
-                        }
-                        else {
-                            unsigned hash = T.trie_hash(node, pos, token);
-                            for (ptr_t t = hash; t != null && T.trie_node[t].from != null; t = T.trie_node[t].next) {
-                                if (T.trie_node[t].from == node && T.trie_node[t].token[0] == token) {
-                                    node = t;
-                                    pos = 0;
-                                    found = true;
-                                    break;
+
+                    char *r = p, *s = r;
+                    ptr_t token = T.get(s, first_hash);
+                    s = q;
+                    if (token == null) {
+                        continue;
+                    }
+                    if (T.trie_root[token].ngram) {
+                        ans.start = p;
+                        ans.end = s;
+                        ans.word = &T.trie_root[token];
+                        ans.ngram = NULL;
+                        answer->push_back(ans);
+                    }
+                    r = ++s;
+                    if (*r != '\n') {
+                        ptr_t node = ~token;
+                        char pos = 0;
+                        do {
+                            token = T.get(s, false);
+                            if (token == null) {
+                                break;
+                            }
+                            bool found = false;
+                            if (node < T.next_node && pos + 1 < T.trie_node[node].size &&
+                                T.trie_node[node].token[pos + 1] == token) {
+                                ++pos;
+                                found = true;
+                            } else {
+                                unsigned hash = T.trie_hash(node, pos, token);
+                                for (ptr_t t = hash;
+                                     t != null && T.trie_node[t].from != null; t = T.trie_node[t].next) {
+                                    if (T.trie_node[t].from == node && T.trie_node[t].token[0] == token) {
+                                        node = t;
+                                        pos = 0;
+                                        found = true;
+                                        break;
+                                    }
                                 }
                             }
-                        }
-                        if (!found) break;
-                        if (T.trie_node[node].ngram[pos]) {
-                            ans.start = p;
-                            ans.end = s;
-                            ans.word = &T.trie_node[node];
-                            ans.pos = pos;
-                            answer->push_back(ans);
-                        }
+                            if (!found) break;
+                            if (T.trie_node[node].ngram[pos]) {
+                                ans.start = p;
+                                ans.end = s;
+                                ans.word = NULL;
+                                ans.ngram = &T.trie_node[node];
+                                ans.pos = pos;
+                                answer->push_back(ans);
+                            }
+                            r = ++s;
+                        } while (*r != '\n');
                     }
                 }
             }
@@ -159,14 +231,26 @@ inline void find(char* string, unsigned len) {
     for (int i = 0; i < find_work_number; ++i) {
         sem_post(&find_start_sem[i]);
     }
+    if (small_work) {
+        sem_post(&print_start_sem);
+    }
     for (int i = 0; i < find_work_number; ++i) {
         sem_wait(&find_done_sem);
+    }
+    if (small_work) {
+        sem_wait(&print_done_sem);
     }
 }
 
 inline void update_find_size() {
+    unsigned max_ngram = 0;
+    for (int i = 0; i < trie_thread_number; ++i) {
+        if (tries[i]->next_ngram > max_ngram) {
+            max_ngram = tries[i]->next_ngram;
+        }
+    }
     for (int i = 0; i <= find_thread_number; ++i) {
-        if (ngram_number * 1.5 > last_found[i].size()) {
+        if (max_ngram * 1.5 > last_found[i].size()) {
             last_found[i].resize(last_found[i].size() * 2);
         }
     }
@@ -189,4 +273,7 @@ inline void init_find() {
         new thread(find_thread, i);
     }
     find_work_number = find_init_number;
+    sem_init(&print_start_sem, 0, 0);
+    sem_init(&print_done_sem, 0, 0);
+    new thread(print_thread);
 }

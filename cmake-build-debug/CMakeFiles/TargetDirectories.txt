@@ -1,0 +1,3 @@
+/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug/CMakeFiles/SIGMOD_2017_Contest.dir

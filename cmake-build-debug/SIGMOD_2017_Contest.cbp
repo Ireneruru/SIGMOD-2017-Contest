@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="SIGMOD_2017_Contest"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="SIGMOD_2017_Contest">
+				<Option output="/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug/SIGMOD_2017_Contest" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug/Makefile&quot;  VERBOSE=1 SIGMOD_2017_Contest"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="SIGMOD_2017_Contest/fast">
+				<Option output="/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug/SIGMOD_2017_Contest" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/8.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug/Makefile&quot;  VERBOSE=1 SIGMOD_2017_Contest/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/ruru/Projects/SIGMOD-2017-Contest/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/Users/ruru/Projects/SIGMOD-2017-Contest/Makefile">
+			<Option target="SIGMOD_2017_Contest"/>
+		</Unit>
+		<Unit filename="/Users/ruru/Projects/SIGMOD-2017-Contest/README">
+			<Option target="SIGMOD_2017_Contest"/>
+		</Unit>
+		<Unit filename="/Users/ruru/Projects/SIGMOD-2017-Contest/compile.sh">
+			<Option target="SIGMOD_2017_Contest"/>
+		</Unit>
+		<Unit filename="/Users/ruru/Projects/SIGMOD-2017-Contest/constant.h">
+			<Option target="SIGMOD_2017_Contest"/>
+		</Unit>
+		<Unit filename="/Users/ruru/Projects/SIGMOD-2017-Contest/find.h">
+			<Option target="SIGMOD_2017_Contest"/>
+		</Unit>
+		<Unit filename="/Users/ruru/Projects/SIGMOD-2017-Contest/harness.cpp">
+			<Option target="SIGMOD_2017_Contest"/>
+		</Unit>
+		<Unit filename="/Users/ruru/Projects/SIGMOD-2017-Contest/main.cpp">
+			<Option target="SIGMOD_2017_Contest"/>
+		</Unit>
+		<Unit filename="/Users/ruru/Projects/SIGMOD-2017-Contest/run.sh">
+			<Option target="SIGMOD_2017_Contest"/>
+		</Unit>
+		<Unit filename="/Users/ruru/Projects/SIGMOD-2017-Contest/token.h">
+			<Option target="SIGMOD_2017_Contest"/>
+		</Unit>
+		<Unit filename="/Users/ruru/Projects/SIGMOD-2017-Contest/trie.h">
+			<Option target="SIGMOD_2017_Contest"/>
+		</Unit>
+		<Unit filename="/Users/ruru/Projects/SIGMOD-2017-Contest/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
